@@ -7,14 +7,14 @@ http://www.abr.business.gov.au/Register.aspx
 
 Simply add the following line to your Gemfile and run bundle install.
 
-  gem 'abnsearch'
+  gem 'abn_search'
     
 = Usage
 
-  require 'abnsearch'
+  require 'abn_search'
 
-  abn = Abnsearch.new("34355893198")
-  => #<Abnsearch:0x0000010109bc38 @errors=[], @abn="34355893198", @WSDL_URL="http://abr.business.gov.au/ABRXMLSearch/AbrXmlSearch.asmx/ABRSearchByABN?", @ABN_LOOKUP_GUID="ac60a98a-fe5e-4a4a-bfcc-bcf30a51e1a9", @name="sony", @entity_type="IND Individual/Sole Trader"> 
+  abn = ABNSearch.new("34355893198")
+  => #<ABNSearch:0x0000010109bc38 @errors=[], @abn="34355893198", @WSDL_URL="http://abr.business.gov.au/ABRXMLSearch/AbrXmlSearch.asmx/ABRSearchByABN?", @ABN_LOOKUP_GUID="ac60a98a-fe5e-4a4a-bfcc-bcf30a51e1a9", @name="sony", @entity_type="IND Individual/Sole Trader"> 
   
   puts abn.name
    => "sony"

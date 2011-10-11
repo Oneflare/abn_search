@@ -6,7 +6,7 @@ Gem::Specification.new do |s|
   s.version     = '0.0.1'
   s.authors     = ["James Martin"]
   s.email       = ["james@visualconnect.net"]
-  s.homepage    = "https://github.com/jamsi"
+  s.homepage    = "https://github.com/jamsi/abn_search"
   s.summary     = "ABNSearch library for Australian businesses."
   s.description = "A simple ABN search library for validating and obtaining ABN details from the Australian Business Register."
   s.rubyforge_project = "abn_search"
