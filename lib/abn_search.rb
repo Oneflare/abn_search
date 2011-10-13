@@ -12,7 +12,7 @@ class ABNSearch
   def initialize(abn=nil, guid=nil)
     self.errors = []
     self.abn = abn unless abn.nil?
-    self.guid = abn unless guid.nil?
+    self.guid = guid unless guid.nil?
     self.search
   end
 
@@ -31,7 +31,7 @@ class ABNSearch
     trading_name = doc.xpath(base_path + '/maintradingname/organisationname')
     main_name = doc.xpath(base_path + '/mainname/organisationname')
     expires = doc.xpath(base_path + '/entitystatus/entitystatuscode')
-  
+    
     # Did we find a valid ABN?
     if abn[0].nil?
       self.errors << "Invalid ABN number."
