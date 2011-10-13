@@ -4,7 +4,7 @@ require 'open-uri'
 class ABNSearch
   
   module Version
-    VERSION = "0.0.1"
+    VERSION = "0.0.2"
   end
   
   attr_accessor :name, :abn, :entity_type, :errors, :guid
