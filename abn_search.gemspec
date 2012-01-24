@@ -3,7 +3,7 @@ $:.push File.expand_path("../lib", __FILE__)
 
 Gem::Specification.new do |s|
   s.name        = "abn_search"
-  s.version     = '0.0.2'
+  s.version     = '0.0.3'
   s.authors     = ["James Martin"]
   s.email       = ["james@visualconnect.net"]
   s.homepage    = "https://github.com/jamsi/abn_search"
@@ -15,6 +15,6 @@ Gem::Specification.new do |s|
   s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")
   s.executables   = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
   s.require_paths = ["lib"]
-  
+
   s.add_dependency("nokogiri")
 end

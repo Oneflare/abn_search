@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    abnsearch (0.0.1)
+    abn_search (0.0.2)
       nokogiri
 
 GEM
@@ -13,4 +13,4 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  abnsearch!
+  abn_search!
