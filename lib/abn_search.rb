@@ -22,6 +22,7 @@ class ABNSearch
     self.errors << "No GUID provided. Please obtain one at - http://www.abr.business.gov.au/Webservices.aspx" && return if self.guid.nil?
 
     @WSDL_URL = 'http://abr.business.gov.au/ABRXMLSearch/AbrXmlSearch.asmx/ABRSearchByABN?'
+    #url = @WSDL_URL + "searchString=56206894472&includeHistoricalDetails=n&authenticationGuid=ac60a98a-fe5e-4a4a-bfcc-bcf30a51e1a9"
     url = @WSDL_URL + "searchString=#{self.abn}&includeHistoricalDetails=n&authenticationGuid=#{self.guid}"
     doc = Nokogiri::HTML(open(url))
 
@@ -31,6 +32,7 @@ class ABNSearch
     abn = doc.xpath(base_path + '/abn/identifiervalue')
     trading_name = doc.xpath(base_path + '/maintradingname/organisationname')
     main_name = doc.xpath(base_path + '/mainname/organisationname')
+    legal_name = doc.xpath(base_path + '/legalname')
     expires = doc.xpath(base_path + '/entitystatus/entitystatuscode')
 
     # Did we find a valid ABN?
@@ -49,10 +51,12 @@ class ABNSearch
     self.entity_type = entity_type[0].content unless entity_type[0].nil?
 
     # Set the business name. Sometimes there's no trading name .. but a "main name".
-    if trading_name[0].nil?
-      self.name = main_name[0].content if !main_name.empty?
-    else
-      self.name = trading_name[0].content if !trading_name.empty?
+    if !trading_name[0].nil?
+      self.name = trading_name[0].content
+    elsif !main_name.empty?
+      self.name = main_name[0].content
+    elsif !legal_name.empty?
+      self.name = legal_name[0].children.first.content
     end
   end
 
