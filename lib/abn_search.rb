@@ -1,63 +1,128 @@
-require 'nokogiri'
-require 'open-uri'
+#
+# ABN Search
+#
+# Request examples;
+#
+# Search by ABN number
+# > a = ABNSearch.new("your-guid")
+# > result = a.search("56206894472")
+#
+# Search by name and return an array of results
+# > a = ABNSearch.new("your-guid")
+# > result = a.search_by_name("Sony", ['NSW', 'VIC'])
+#
+
+require 'savon'
 
 class ABNSearch
 
   module Version
-    VERSION = "0.0.3"
+    VERSION = "0.0.5"
   end
 
-  attr_accessor :name, :abn, :entity_type, :errors, :guid
+  attr_accessor :errors, :guid, :proxy, :client_options
 
-  def initialize(abn=nil, guid=nil)
+  # Setup a new instance of the ABN search class.
+  #
+  # @param [String] guid - the ABR GUID for Web Services access
+  # @param [Hash] options - options detailed below
+  # @option options [String] :proxy Proxy URL string if required (Example: http://user:pass@host.example.com:443)
+  # @return [ABNSearch]
+  #
+  def initialize(guid=nil, options = {})
     self.errors = []
-    self.abn = abn unless abn.nil?
     self.guid = guid unless guid.nil?
-    self.name = "n/a"
-    self.search
+    self.proxy = options[:proxy] || nil
+    self.client_options = {}
+    self.client_options = { :wsdl => "http://www.abn.business.gov.au/abrxmlsearch/ABRXMLSearch.asmx?WSDL" }
+    self.client_options.merge!({ :proxy => self.proxy }) unless self.proxy.nil?
   end
 
-  def search
-    self.errors << "No ABN provided." && return if self.abn.nil?
+  # Performs an ABR search for the ABN setup upon initialization
+  #
+  # @param [String] abn - the abn you wish to search for
+  # @return [ABNSearch] search results in class instance
+  def search(abn)
+    self.errors << "No ABN provided." && return if abn.nil?
     self.errors << "No GUID provided. Please obtain one at - http://www.abr.business.gov.au/Webservices.aspx" && return if self.guid.nil?
 
-    @WSDL_URL = 'http://abr.business.gov.au/ABRXMLSearch/AbrXmlSearch.asmx/ABRSearchByABN?'
-    #url = @WSDL_URL + "searchString=56206894472&includeHistoricalDetails=n&authenticationGuid=ac60a98a-fe5e-4a4a-bfcc-bcf30a51e1a9"
-    url = @WSDL_URL + "searchString=#{self.abn}&includeHistoricalDetails=n&authenticationGuid=#{self.guid}"
-    doc = Nokogiri::HTML(open(url))
+    begin
+      client = Savon.client(self.client_options)
 
-    # Fetch attributes we require
-    base_path = '//html/body/abrpayloadsearchresults/response/businessentity'
-    entity_type = doc.xpath(base_path + '/entitytype')
-    abn = doc.xpath(base_path + '/abn/identifiervalue')
-    trading_name = doc.xpath(base_path + '/maintradingname/organisationname')
-    main_name = doc.xpath(base_path + '/mainname/organisationname')
-    legal_name = doc.xpath(base_path + '/legalname')
-    expires = doc.xpath(base_path + '/entitystatus/entitystatuscode')
+      response = client.call(:abr_search_by_abn, message: { authenticationGuid: self.guid, searchString: abn.gsub(" ", ""), includeHistoricalDetails: "N" })
+      result = response.body[:abr_search_by_abn_response][:abr_payload_search_results][:response][:business_entity]
+      return parse_search_result(result)
+    rescue => ex
+      self.errors << ex.to_s
+    end
+  end
 
-    # Did we find a valid ABN?
-    if abn[0].nil?
-      self.errors << "Invalid ABN number."
-      return
+  # Searches the ABR registry by name. Simply pass in the search term and which state(s) to search in.
+  #
+  # @param [String] name - the search term
+  # @param [Array] states - a list of states that you wish to filter by
+  # @param [String] postcode - the postcode you wish to filter by
+  def search_by_name(name, states=['NSW'], postcode='ALL')
+
+    begin
+      client = Savon.client(self.client_options)
+      request = {
+        externalNameSearch: {
+          authenticationGuid: self.guid, name: name,
+          filters: {
+            nameType: {
+              tradingName: 'Y', legalName: 'Y'
+            },
+            postcode: postcode,
+            "stateCode" => {
+              'QLD' => states.include?('QLD') ? "Y" : "N",
+              'NT' => states.include?('NT') ? "Y" : "N",
+              'SA' => states.include?('SA') ? "Y" : "N",
+              'WA' => states.include?('WA') ? "Y" : "N",
+              'VIC' => states.include?('VIC') ? "Y" : "N",
+              'ACT' => states.include?('ACT') ? "Y" : "N",
+              'TAS' => states.include?('TAS') ? "Y" : "N",
+              'NSW' => states.include?('NSW') ? "Y" : "N"
+            }
+          }
+        },
+        authenticationGuid: self.guid
+      }
+
+      response = client.call(:abr_search_by_name, message: request)
+      results = response.body[:abr_search_by_name_response][:abr_payload_search_results][:response][:search_results_list][:search_results_record]
+
+      return [parse_search_result(results)] if !results.is_a?(Array)
+      return results.map do |r| parse_search_result(r) end
+    rescue => ex
+      self.errors << ex.to_s
+    end
+  end
+
+  # Parses results for a search by ABN
+  def parse_search_result(result)
+    result = {
+      abn:            result[:abn][:identifier_value],
+      entity_type:    result[:entity_type].blank? ? "" : result[:entity_type][:entity_description],
+      status:         result[:entity_status].blank? ? "" : result[:entity_status][:entity_status_code],
+      main_name:      result[:main_name].blank? ? "" : result[:main_name][:organisation_name],
+      trading_name:   result[:main_trading_name].blank? ? "" : result[:main_trading_name][:organisation_name],
+      legal_name:     result[:legal_name].blank? ? "" : "#{result[:legal_name][:given_name]} #{result[:legal_name][:family_name]}",
+      other_trading_name: result[:other_trading_name].blank? ? "" : result[:other_trading_name][:organisation_name]
+    }
+
+    # Work out what we should return as a name
+    if !result[:trading_name].blank?
+      result[:name] = result[:trading_name]
+    elsif !result[:main_name].blank?
+      result[:name] = result[:main_name]
+    elsif !result[:other_trading_name].blank?
+      result[:name] = result[:other_trading_name]
+    else
+      result[:name] = result[:legal_name]
     end
 
-    # Is the busines still valid?
-    if expires && expires[0].content.include?("Cancelled")
-      self.errors << "Business ABN #{self.abn} has expired."
-      return
-    end
-
-    # Set ABN business attributes
-    self.entity_type = entity_type[0].content unless entity_type[0].nil?
-
-    # Set the business name. Sometimes there's no trading name .. but a "main name".
-    if !trading_name[0].nil?
-      self.name = trading_name[0].content
-    elsif !main_name.empty?
-      self.name = main_name[0].content
-    elsif !legal_name.empty?
-      self.name = legal_name[0].children.first.content
-    end
+    return result
   end
 
   def valid?
