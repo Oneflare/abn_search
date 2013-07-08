@@ -7,24 +7,56 @@ class ABNSearch
     VERSION = "0.0.3"
   end
 
-  attr_accessor :name, :abn, :entity_type, :errors, :guid
+  # The Entity Name
+  attr_accessor :name
+  # The Entity ABN
+  attr_accessor :abn
+  # The Entity Type
+  attr_accessor :entity_type
+  # Any errors returned from the search
+  attr_accessor :errors
 
-  def initialize(abn=nil, guid=nil)
+  # @private
+  attr_accessor :guid, :proxy, :proxy_username, :proxy_password
+
+  # Setup a new instance of the ABN search class. This performs a search on the ABN entered
+  #
+  # @param [String] abn - the abn to search
+  # @param [String] guid - the ABR GUID for Web Services access
+  # @param [Hash] options - options detailed below
+  # @option options [String] :proxy Proxy URL if required
+  # @option options [String] :proxy_username Username for proxy authentication
+  # @option options [String] :proxy_password Password for proxy authentication
+  # @return [ABNSearch]
+  def initialize(abn=nil, guid=nil, options = {})
     self.errors = []
     self.abn = abn unless abn.nil?
     self.guid = guid unless guid.nil?
     self.name = "n/a"
+    
+    self.proxy = options.delete(:proxy)
+    self.proxy_username = options.delete(:proxy_username)
+    self.proxy_password = options.delete(:proxy_password)
     self.search
   end
 
+  # Performs an ABR search for the ABN setup upon initialization
+  #
+  # @return [ABNSearch] search results in class instance
   def search
     self.errors << "No ABN provided." && return if self.abn.nil?
     self.errors << "No GUID provided. Please obtain one at - http://www.abr.business.gov.au/Webservices.aspx" && return if self.guid.nil?
 
-    @WSDL_URL = 'http://abr.business.gov.au/ABRXMLSearch/AbrXmlSearch.asmx/ABRSearchByABN?'
-    #url = @WSDL_URL + "searchString=56206894472&includeHistoricalDetails=n&authenticationGuid=ac60a98a-fe5e-4a4a-bfcc-bcf30a51e1a9"
-    url = @WSDL_URL + "searchString=#{self.abn}&includeHistoricalDetails=n&authenticationGuid=#{self.guid}"
-    doc = Nokogiri::HTML(open(url))
+    @WS_URL = "https://abr.business.gov.au/ABRXMLSearch/AbrXmlSearch.asmx/ABRSearchByABN?searchString=#{self.abn}&includeHistoricalDetails=n&authenticationGuid=#{self.guid}"
+    
+    open_options = {}
+    if self.proxy_username && self.proxy_password && self.proxy
+      open_options[:proxy_http_basic_authentication] = [self.proxy, self.proxy_username, self.proxy_password]
+    elsif self.proxy
+      open_options[:proxy] = self.proxy if self.proxy
+    end
+
+    doc = Nokogiri::HTML(open(@WS_URL, open_options))
 
     # Fetch attributes we require
     base_path = '//html/body/abrpayloadsearchresults/response/businessentity'
@@ -41,7 +73,7 @@ class ABNSearch
       return
     end
 
-    # Is the busines still valid?
+    # Is the business still valid?
     if expires && expires[0].content.include?("Cancelled")
       self.errors << "Business ABN #{self.abn} has expired."
       return
@@ -58,8 +90,12 @@ class ABNSearch
     elsif !legal_name.empty?
       self.name = legal_name[0].children.first.content
     end
+
+    self
   end
 
+  # Indicates if the results are valid or not (e.g. are there any errors such as Cancelled records)
+  # @return [Boolean]
   def valid?
     self.errors.size == 0
   end

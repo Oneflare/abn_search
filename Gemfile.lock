@@ -1,16 +1,20 @@
 PATH
   remote: .
   specs:
-    abn_search (0.0.2)
+    abn_search (0.0.4)
       nokogiri
 
 GEM
   remote: http://rubygems.org/
   specs:
-    nokogiri (1.5.0)
+    mini_portile (0.5.1)
+    nokogiri (1.6.0)
+      mini_portile (~> 0.5.0)
+    yard (0.8.6.2)
 
 PLATFORMS
   ruby
 
 DEPENDENCIES
   abn_search!
+  yard
