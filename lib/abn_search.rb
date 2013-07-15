@@ -17,7 +17,7 @@ require 'savon'
 class ABNSearch
 
   module Version
-    VERSION = "0.0.5"
+    VERSION = "0.0.6"
   end
 
   attr_accessor :errors, :guid, :proxy, :client_options
