@@ -90,10 +90,15 @@ class ABNSearch
       }
 
       response = client.call(:abr_search_by_name, message: request)
-      results = response.body[:abr_search_by_name_response][:abr_payload_search_results][:response][:search_results_list][:search_results_record]
+      result_list = response.body[:abr_search_by_name_response][:abr_payload_search_results][:response][:search_results_list]
 
-      return [parse_search_result(results)] if !results.is_a?(Array)
-      return results.map do |r| parse_search_result(r) end
+      if result_list.blank?
+        return []
+      else
+        results = response.body[:abr_search_by_name_response][:abr_payload_search_results][:response][:search_results_list][:search_results_record]
+        return [parse_search_result(results)] if !results.is_a?(Array)
+        return results.map do |r| parse_search_result(r) end
+      end
     rescue => ex
       self.errors << ex.to_s
     end
@@ -108,6 +113,7 @@ class ABNSearch
       main_name:      result[:main_name].blank? ? "" : result[:main_name][:organisation_name],
       trading_name:   result[:main_trading_name].blank? ? "" : result[:main_trading_name][:organisation_name],
       legal_name:     result[:legal_name].blank? ? "" : "#{result[:legal_name][:given_name]} #{result[:legal_name][:family_name]}",
+      legal_name2:     result[:legal_name].blank? ? "" : result[:legal_name][:full_name],
       other_trading_name: result[:other_trading_name].blank? ? "" : result[:other_trading_name][:organisation_name]
     }
 
@@ -119,7 +125,11 @@ class ABNSearch
     elsif !result[:other_trading_name].blank?
       result[:name] = result[:other_trading_name]
     else
-      result[:name] = result[:legal_name]
+      if !result[:legal_name].blank? && result[:legal_name].length > 2
+        result[:name] = result[:legal_name]
+      elsif !result[:legal_name].blank?
+        result[:name] = result[:legal_name2]
+      end
     end
 
     return result
