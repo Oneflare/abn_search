@@ -107,14 +107,14 @@ class ABNSearch
   # Parses results for a search by ABN
   def parse_search_result(result)
     result = {
-      abn:            result[:abn][:identifier_value],
-      entity_type:    result[:entity_type].blank? ? "" : result[:entity_type][:entity_description],
-      status:         result[:entity_status].blank? ? "" : result[:entity_status][:entity_status_code],
-      main_name:      result[:main_name].blank? ? "" : result[:main_name][:organisation_name],
-      trading_name:   result[:main_trading_name].blank? ? "" : result[:main_trading_name][:organisation_name],
-      legal_name:     result[:legal_name].blank? ? "" : "#{result[:legal_name][:given_name]} #{result[:legal_name][:family_name]}",
-      legal_name2:     result[:legal_name].blank? ? "" : result[:legal_name][:full_name],
-      other_trading_name: result[:other_trading_name].blank? ? "" : result[:other_trading_name][:organisation_name]
+      abn:                result[:abn][:identifier_value],
+      entity_type:        result[:entity_type].blank? ? "" : result[:entity_type][:entity_description],
+      status:             result[:entity_status].blank? ? "" : result[:entity_status][:entity_status_code],
+      main_name:          result[:main_name].blank? ? "" : result[:main_name][:organisation_name],
+      trading_name:       result[:main_trading_name].blank? ? "" : result[:main_trading_name][:organisation_name],
+      legal_name:         result[:legal_name].blank? ? "" : "#{result[:legal_name][:given_name]} #{result[:legal_name][:family_name]}",
+      legal_name2:        result[:legal_name].blank? ? "" : result[:legal_name][:full_name],
+      other_trading_name: result[:other_trading_name].blank? ? "" : Array.wrap(result[:other_trading_name]).map { |h| h[:organisation_name] }
     }
 
     # Work out what we should return as a name
@@ -122,8 +122,8 @@ class ABNSearch
       result[:name] = result[:trading_name]
     elsif !result[:main_name].blank?
       result[:name] = result[:main_name]
-    elsif !result[:other_trading_name].blank?
-      result[:name] = result[:other_trading_name]
+    elsif !result[:other_trading_name].empty? && !result[:other_trading_name].first.blank?
+      result[:name] = result[:other_trading_name].first
     else
       if !result[:legal_name].blank? && result[:legal_name].length > 2
         result[:name] = result[:legal_name]
