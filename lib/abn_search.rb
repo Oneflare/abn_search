@@ -50,7 +50,7 @@ class ABNSearch
       client = Savon.client(self.client_options)
 
       response = client.call(:abr_search_by_abn, message: { authenticationGuid: self.guid, searchString: abn.gsub(" ", ""), includeHistoricalDetails: "N" })
-      puts "First response: #{response}"
+      # puts "First response: #{response}"
       result = response.body[:abr_search_by_abn_response][:abr_payload_search_results][:response][:business_entity]
       # puts "Filtered result: #{result}"
       # puts "ABN: #{(result[:abn][:identifier_value] rescue "")}"
