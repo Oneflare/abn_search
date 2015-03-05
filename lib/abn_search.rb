@@ -154,21 +154,22 @@ class ABNSearch
   # Parses results for a search by ABN
   def parse_search_result(result)
     result = {
-      acn:            (result[:asic_number] rescue ""),
-      abn:            (result[:abn][:identifier_value] rescue ""),
-      entity_type:    result[:entity_type].blank? ? "" : (result[:entity_type][:entity_description] rescue ""),
-      status:         result[:entity_status].blank? ? "" : (result[:entity_status][:entity_status_code] rescue ""),
-      main_name:      result[:main_name].blank? ? "" : (result[:main_name][:organisation_name] rescue ""),
-      trading_name:   result[:main_trading_name].blank? ? "" : (result[:main_trading_name][:organisation_name] rescue ""),
-      legal_name:     result[:legal_name].blank? ? "" : ("#{result[:legal_name][:given_name]} #{result[:legal_name][:family_name]}" rescue ""),
-      legal_name2:     result[:legal_name].blank? ? "" : (result[:legal_name][:full_name] rescue ""),
-      other_trading_name: result[:other_trading_name].blank? ? "" : (result[:other_trading_name][:organisation_name] rescue ""),
-      active_from_date: result[:entity_status].blank? ? "" : (result[:entity_status][:effective_from] rescue ""),
-      address_state_code:  result[:main_business_physical_address].blank? ? "" : (result[:main_business_physical_address][:state_code] rescue ""),
-      address_post_code: result[:main_business_physical_address].blank? ? "" : (result[:main_business_physical_address][:postcode] rescue ""),
-      address_from_date:   result[:main_business_physical_address].blank? ? "" : (result[:main_business_physical_address][:effective_from] rescue ""),
+      acn:                  (result[:asic_number] rescue ""),
+      abn:                  (result[:abn][:identifier_value] rescue ""),
+      entity_type:          result[:entity_type].blank? ? "" : (result[:entity_type][:entity_description] rescue ""),
+      status:               result[:entity_status].blank? ? "" : (result[:entity_status][:entity_status_code] rescue ""),
+      main_name:            result[:main_name].blank? ? "" : (result[:main_name][:organisation_name] rescue ""),
+      trading_name:         result[:main_trading_name].blank? ? "" : (result[:main_trading_name][:organisation_name] rescue ""),
+      legal_name:           result[:legal_name].blank? ? "" : ("#{result[:legal_name][:given_name]} #{result[:legal_name][:family_name]}" rescue ""),
+      legal_name2:          result[:legal_name].blank? ? "" : (result[:legal_name][:full_name] rescue ""),
+      other_trading_name:   result[:other_trading_name].blank? ? "" : (result[:other_trading_name][:organisation_name] rescue ""),
+      active_from_date:     result[:entity_status].blank? ? "" : (result[:entity_status][:effective_from] rescue ""),
+      address_state_code:   result[:main_business_physical_address].blank? ? "" : (result[:main_business_physical_address][:state_code] rescue ""),
+      address_post_code:    result[:main_business_physical_address].blank? ? "" : (result[:main_business_physical_address][:postcode] rescue ""),
+      address_from_date:    result[:main_business_physical_address].blank? ? "" : (result[:main_business_physical_address][:effective_from] rescue ""),
+      last_updated:         (result[:record_last_updated_date] rescue ""),
+      gst_from_date:        result[:goods_and_services_tax].blank? ? "" : (result[:goods_and_services_tax][:effective_from] rescue "")
     }
-
 
     # Work out what we should return as a name
     if !result[:trading_name].blank?
