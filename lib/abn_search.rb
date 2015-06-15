@@ -181,7 +181,7 @@ class ABNSearch
     else
       if !result[:legal_name].blank? && result[:legal_name].length > 2
         result[:name] = result[:legal_name]
-      elsif !result[:legal_name].blank?
+      elsif !result[:legal_name2].blank?
         result[:name] = result[:legal_name2]
       end
     end
