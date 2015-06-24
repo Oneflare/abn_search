@@ -1,16 +1,50 @@
 PATH
   remote: .
   specs:
-    abn_search (0.0.2)
+    abn_search (0.0.6)
       nokogiri
+      savon
 
 GEM
   remote: http://rubygems.org/
   specs:
-    nokogiri (1.5.0)
+    akami (1.2.2)
+      gyoku (>= 0.4.0)
+      nokogiri
+    builder (3.2.2)
+    gyoku (1.1.1)
+      builder (>= 2.1.2)
+    httpi (2.2.5)
+      rack
+    macaddr (1.7.1)
+      systemu (~> 2.6.2)
+    mime-types (1.25.1)
+    mini_portile (0.6.0)
+    nokogiri (1.6.3.1)
+      mini_portile (= 0.6.0)
+    nori (2.4.0)
+    rack (1.5.2)
+    savon (2.6.0)
+      akami (~> 1.2.0)
+      builder (>= 2.1.2)
+      gyoku (~> 1.1.0)
+      httpi (~> 2.2.3)
+      nokogiri (>= 1.4.0)
+      nori (~> 2.4.0)
+      uuid (~> 2.3.7)
+      wasabi (~> 3.3.0)
+    systemu (2.6.4)
+    uuid (2.3.7)
+      macaddr (~> 1.0)
+    wasabi (3.3.0)
+      httpi (~> 2.0)
+      mime-types (< 2.0.0)
+      nokogiri (>= 1.4.0)
+    yard (0.8.7.4)
 
 PLATFORMS
   ruby
 
 DEPENDENCIES
   abn_search!
+  yard
