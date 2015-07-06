@@ -1,9 +1,9 @@
 PATH
   remote: .
   specs:
-    abn_search (0.0.7)
-      nokogiri
-      savon
+    abn_search (1.0.0)
+      nokogiri (~> 1.6)
+      savon (~> 2.11)
 
 GEM
   remote: http://rubygems.org/
