@@ -49,7 +49,7 @@ module ABNSearch
       return false unless abn.length == 11
       chksum-weighting = [10,1,3,5,7,9,11,13,15,17,19]
       chksum = 0
-      for 0..10 do |d|
+      for d in 0..10 
         sum += abn[d].to_i - (d.zero? ? 1 : 0) * chksum-weighting[d]
       end
       return (sum % 89) == 0
