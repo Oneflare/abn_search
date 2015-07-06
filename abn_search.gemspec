@@ -3,11 +3,11 @@ $:.push File.expand_path("../lib", __FILE__)
 
 Gem::Specification.new do |s|
   s.name        = "abn_search"
-  s.version     = '0.0.7'
-  s.authors     = ["James Martin"]
-  s.email       = ["james@visualconnect.net"]
-  s.homepage    = "https://github.com/jamsi/abn_search"
-  s.summary     = "ABNSearch library for Australian businesses."
+  s.version     = '1.0.0'
+  s.authors     = ["James Martin", "Stuart Auld"]
+  s.email       = ["james@visualconnect.net", "sja@marsupialmusic.net"]
+  s.homepage    = "https://github.com/Oneflare/abn_search"
+  s.summary     = "ABR Search library for Australian businesses."
   s.description = "A simple ABN search library for validating and obtaining ABN details from the Australian Business Register."
   s.rubyforge_project = "abn_search"
 
