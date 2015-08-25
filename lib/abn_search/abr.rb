@@ -42,14 +42,13 @@ module ABNSearch
       @@client_options.merge!({ proxy: @@proxy }) unless @@proxy.nil?
     end
 
-    # Performs an ABR search for the ABN setup upon initialization
+    # Performs an ABR search by ASIC
     #
     # @param [String] acn - the acn you wish to search for
     # @return [ABNSearch] search results in class instance
-    # TODO: cleanup the acn method
     def self.search_by_acn(acn)
       raise ArgumentError, "ACN #{acn} is invalid" unless ABNSearch::Entity.valid_acn?(acn)
-      raise ArgumentError, 'No GUID provided. Please obtain one at - http://www.abr.business.gov.au/Webservices.aspx' if @@guid.nil?
+      check_guid
 
       begin
         client = Savon.client(@@client_options)
@@ -63,13 +62,13 @@ module ABNSearch
       end
     end
 
-    # Performs an ABR search for the ABN setup upon initialization
+    # Performs an ABR search by ABN
     #
     # @param [String] abn - the abn you wish to search for
     # @return [ABNSearch] search results in class instance
     def self.search(abn)
       raise ArgumentError, "ABN #{abn} is invalid" unless ABNSearch::Entity.valid?(abn)
-      raise ArgumentError, 'No GUID provided. Please obtain one at - http://www.abr.business.gov.au/Webservices.aspx' if @@guid.nil?
+      check_guid
 
       begin
         client = Savon.client(@@client_options)
@@ -82,16 +81,15 @@ module ABNSearch
       end
     end
 
-    # Searches the ABR registry by name. Simply pass in the search term and which state(s) to search in.
+    # Performs an ABR search by name
     #
     # @param [String] name - the search term
     # @param [Hash] options hash - :states, :postcode and :parse_results
     # @param [String] postcode - the postcode you wish to filter by
     # TODO: clean up this method
     def search_by_name(name, options={})
-
-      @@errors << "No search phrase provided." && return if name.nil?
-      @@errors << "No GUID provided. Please obtain one at - http://www.abr.business.gov.au/Webservices.aspx" && return if @@guid.nil?
+      raise ArgumentError, "No search string provided" unless name.is_a?(String)
+      check_guid
 
       begin
         options[:states]        ||= ['NSW','QLD','VIC','SA','WA','TAS','ACT','NT']
@@ -151,6 +149,11 @@ module ABNSearch
           payload: response.body[expected_first_symbol][:abr_payload_search_results][:response][:business_entity]
         }
       end
+    end
+
+    def self.check_guid
+      raise ArgumentError, 'No GUID provided. Please obtain one at - http://www.abr.business.gov.au/Webservices.aspx' if @@guid.nil?
+      true
     end
 
   end
