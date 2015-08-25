@@ -47,32 +47,19 @@ module ABNSearch
     # @param [String] acn - the acn you wish to search for
     # @return [ABNSearch] search results in class instance
     # TODO: cleanup the acn method
-    def search_by_acn(acn)
-      @@errors << "No ACN provided." && return if acn.nil?
-      @@errors << "No GUID provided. Please obtain one at - http://www.abr.business.gov.au/Webservices.aspx" && return if @@guid.nil?
+    def self.search_by_acn(acn)
+      raise ArgumentError, "ACN #{acn} is invalid" unless ABNSearch::ABN.valid_acn?(acn)
+      raise ArgumentError, 'No GUID provided. Please obtain one at - http://www.abr.business.gov.au/Webservices.aspx' if @@guid.nil?
 
       begin
         client = Savon.client(@@client_options)
 
         response = client.call(:abr_search_by_asic, message: { authenticationGuid: @@guid, searchString: acn.gsub(" ", ""), includeHistoricalDetails: "N" })
-        # puts "First response: #{response}"
-        result = response.body[:abr_search_by_asic_response][:abr_payload_search_results][:response][:business_entity]
-        # puts "Filtered result: #{result}"
-        # puts "ABN: #{(result[:abn][:identifier_value] rescue "")}"
-        # puts "Entity Type: #{(result[:entity_type][:entity_description] rescue "")}"
-        # puts "Status: #{(result[:entity_status][:entity_status_code] rescue "")}"
-        # puts "Main name: #{(result[:main_name][:organisation_name] rescue "")}"
-        # puts "Trading name: #{(result[:main_trading_name][:organisation_name] rescue "")}"
-        # puts "Legal name: #{(result[:legal_name][:full_name] rescue "")}"
-        # puts "Other Trading name: #{(result[:other_trading_name][:organisation_name] rescue "")}"
-        # puts "Active from date: #{(result[:entity_status][:effective_from] rescue "")}"
-        # puts "Address state code: #{(result[:main_business_physical_address][:state_code] rescue "")}"
-        # puts "Address post code: #{(result[:main_business_physical_address][:postcode] rescue "")}"
-        # puts "Address from date: #{(result[:main_business_physical_address][:effective_from] rescue "")}"
 
-        return parse_search_result(result)
-      rescue => ex
-        @@errors << ex.to_s
+        validate_response(response,:abr_search_by_asic_response)
+
+      rescue => e
+        raise "ABNSearch::ABR#search_by_acn raised #{e.class}: #{e.message}"
       end
     end
 
@@ -88,9 +75,10 @@ module ABNSearch
         client = Savon.client(@@client_options)
 
         response = client.call(:abr_search_by_abn, message: { authenticationGuid: @@guid, searchString: abn.gsub(/\s+/, ""), includeHistoricalDetails: "N" })
-        response.body[:abr_search_by_abn_response][:abr_payload_search_results][:response][:business_entity]
+
+        validate_response(response,:abr_search_by_abn_response)
       rescue => e
-        raise "ABNSearch::ABN#search raised #{e.class}: #{e.message}"
+        raise "ABNSearch::ABR#search raised #{e.class}: #{e.message}"
       end
     end
 
@@ -144,6 +132,24 @@ module ABNSearch
         end
       rescue => ex
         @@errors << ex.to_s
+      end
+    end
+
+    #######
+    private
+    #######
+
+    def self.validate_response(response,expected_first_symbol)
+      if response.body[expected_first_symbol][:abr_payload_search_results][:response][:exception].nil?
+        return {
+          result: :success,
+          payload: response.body[expected_first_symbol][:abr_payload_search_results][:response][:business_entity]
+        }
+      else
+        return {
+          result: :error,
+          payload: response.body[expected_first_symbol][:abr_payload_search_results][:response][:exception]
+        }
       end
     end
 
