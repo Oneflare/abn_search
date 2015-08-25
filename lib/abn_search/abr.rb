@@ -49,7 +49,7 @@ module ABNSearch
     # @return [Hash] a hash containing result status (:result) and payload (:payload)
     def self.search_by_acn(acn)
       raise ArgumentError, "ACN #{acn} is invalid" unless ABNSearch::Entity.valid_acn?(acn)
-      check_guid
+      self.check_guid
 
       client = Savon.client(@@client_options)
 
@@ -64,7 +64,7 @@ module ABNSearch
     # @return [Hash] a hash containing result status (:result) and payload (:payload)
     def self.search(abn)
       raise ArgumentError, "ABN #{abn} is invalid" unless ABNSearch::Entity.valid?(abn)
-      check_guid
+      self.check_guid
 
       client = Savon.client(@@client_options)
 
@@ -83,7 +83,7 @@ module ABNSearch
     # TODO: clean up this method
     def search_by_name(name, options={})
       raise ArgumentError, "No search string provided" unless name.is_a?(String)
-      check_guid
+      self.check_guid
 
       options[:states]        ||= ['NSW','QLD','VIC','SA','WA','TAS','ACT','NT']
       options[:postcode]      ||= 'ALL'
@@ -148,6 +148,7 @@ module ABNSearch
       raise ArgumentError, 'No GUID provided. Please obtain one at - http://www.abr.business.gov.au/Webservices.aspx' if @@guid.nil?
       true
     end
+
 
   end
 
