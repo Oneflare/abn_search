@@ -81,7 +81,7 @@ module ABNSearch
     # @option options [String] :postcode - a postcode to which to confine your Search
     # @param [String] postcode - the postcode you wish to filter by
     # TODO: clean up this method
-    def self.search_by_name(name, options={})
+    def search_by_name(name, options={})
       raise ArgumentError, "No search string provided" unless name.is_a?(String)
       check_guid
 
@@ -126,6 +126,15 @@ module ABNSearch
 
     end
 
+    def self.check_guid
+      new(@@guid).check_guid
+    end
+
+    def check_guid
+      raise ArgumentError, 'No GUID provided. Please obtain one at - http://www.abr.business.gov.au/Webservices.aspx' if @@guid.nil?
+      true
+    end
+
     #######
     private
     #######
@@ -144,10 +153,6 @@ module ABNSearch
       end
     end
 
-    def self.check_guid
-      raise ArgumentError, 'No GUID provided. Please obtain one at - http://www.abr.business.gov.au/Webservices.aspx' if @@guid.nil?
-      true
-    end
 
   end
 
