@@ -81,7 +81,7 @@ module ABNSearch
     # @option options [String] :postcode - a postcode to which to confine your Search
     # @param [String] postcode - the postcode you wish to filter by
     # TODO: clean up this method
-    def self.search_by_name(name, options={})
+    def search_by_name(name, options={})
       raise ArgumentError, "No search string provided" unless name.is_a?(String)
       check_guid
 
