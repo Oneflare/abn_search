@@ -69,7 +69,7 @@ module ABNSearch
     # @return [Boolean] true or false
     def valid?
       return false unless @abn.is_a?(String)
-      return false unless @abn.length == 11
+      return false if (@abn =~ /^[0-9]{11}$/).nil?
       weighting = [10,1,3,5,7,9,11,13,15,17,19]
       chksum = 0
       (0..10).each do |d|
@@ -93,7 +93,7 @@ module ABNSearch
     # return [Boolean]
     def valid_acn?
       return false unless @acn.is_a?(String)
-      return false unless @acn.length == 9
+      return false if (@acn =~ /^[0-9]{9}$/).nil?
       weighting = [8,7,6,5,4,3,2,1]
       chksum = 0
       (0..7).each do |d|
