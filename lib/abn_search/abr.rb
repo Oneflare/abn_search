@@ -140,15 +140,15 @@ module ABNSearch
     #######
 
     def self.validate_response(response,expected_first_symbol)
-      if response.body[expected_first_symbol][:abr_payload_search_results][:response][:exception].nil?
-        return {
-          result: :success,
-          payload: response.body[expected_first_symbol][:abr_payload_search_results][:response][:business_entity]
-        }
-      else
+      if response.body[expected_first_symbol][:abr_payload_search_results][:response][:business_entity].nil?
         return {
           result: :error,
           payload: response.body[expected_first_symbol][:abr_payload_search_results][:response][:exception]
+        }
+      else
+        return {
+          result: :success,
+          payload: response.body[expected_first_symbol][:abr_payload_search_results][:response][:business_entity]
         }
       end
     end

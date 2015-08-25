@@ -33,12 +33,29 @@ describe ABNSearch::ABN do
     describe "sanity check" do
       it "should not attempt to query ABR without a GUID" do
         expect{(good_abns.first.update_from_abr!)}.to raise_error(ArgumentError)
+        expect{(good_acns.first.update_from_abr_using_acn!)}.to raise_error(ArgumentError)
       end
 
       it "should fail if you use a fake GUID" do
         ABNSearch::ABR.new('fake-guid')
         expect{(good_abns.first.update_from_abr!)}.to raise_error(RuntimeError)
+        expect{(good_acns.first.update_from_abr_using_acn!)}.to raise_error(RuntimeError)
       end
+
+      it "should work if you use a real GUID and a real ABN" do
+        ABNSearch::ABR.new(ENV['ABR_GUID'])
+        company_name = good_abns.first.update_from_abr!.name
+        expect(company_name).to be_a String
+        expect(company_name.length).to be > 0
+      end
+
+      it "should work if you use a real GUID and a real ACN" do
+        ABNSearch::ABR.new(ENV['ABR_GUID'])
+        company_name = good_acns.first.update_from_abr_using_acn!.name
+        expect(company_name).to be_a String
+        expect(company_name.length).to be > 0
+      end
+
     end
   end
 

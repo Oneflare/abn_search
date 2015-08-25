@@ -137,7 +137,7 @@ module ABNSearch
     # @return [self]
     def process_raw_abr_detail(abr_detail)
 
-      if abr_detail[:response] == :success
+      if abr_detail[:result] == :success
         body = abr_detail[:payload]
       else
         raise "The ABR returned an exception: #{abr_detail[:payload]}"
