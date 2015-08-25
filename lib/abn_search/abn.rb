@@ -26,13 +26,17 @@ module ABNSearch
     # Initialize an ABN object
     #
     # @param options [Hash] hash of options
-    #
+    # @option options [String] :abn an Australian Business Number
+    # @option options [String] :acn an Australian Company Number
+    # @option options [Hash] :abr_detail raw output from the ABR
     # @return [ABNSearch::Entity] an instance of ABNSearch::Entity is returned
     def initialize(options={})
       # try to mash the input into something usable
       @abn        = options[:abn].to_s.gsub(/\s+/,"").rjust(11,"0") unless options[:abn] == nil
       @acn        = options[:acn].to_s.gsub(/\s+/,"").rjust(9,"0") unless options[:acn] == nil
 
+      process_raw_abr_detail({result: :success, payload: options[:abr_detail]}) unless options[:abr_detail].nil?
+      self
     end
 
     # Update the ABN object with information from the ABR via ABN search
@@ -86,6 +90,9 @@ module ABNSearch
     # @return [Boolean]
     def self.valid?(abn)
        new({abn: abn}).valid?
+    rescue => e
+     puts "Error: #{e.class}\n#{e.backtrace.join("\n")}"
+     return false
     end
 
     # Test to see if the ABN has a valid ACN
@@ -110,6 +117,9 @@ module ABNSearch
     # @return [Boolean]
     def self.valid_acn?(acn)
        new({acn: acn}).valid_acn?
+    rescue => e
+      puts "Error: #{e.class}\n#{e.backtrace.join("\n")}"
+      return false
     end
 
     # Return a nicely formatted string for valid abns, or
@@ -140,7 +150,7 @@ module ABNSearch
       if abr_detail[:result] == :success
         body = abr_detail[:payload]
       else
-        raise "The ABR returned an exception: #{abr_detail[:payload]}"
+        raise "The ABR returned an exception: #{abr_detail[:payload][:exception_description]}"
       end
 
       @acn                = body[:asic_number] rescue nil

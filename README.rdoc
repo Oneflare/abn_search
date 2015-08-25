@@ -52,9 +52,8 @@ Simply add the following line to your Gemfile and run bundle install.
   => "SONY AUSTRALIA LIMITED"
 
   # Search by name
-  results = abn.search_by_name("Sony", ['NSW'], '2000')
-
-  puts results
+  ABNSearch::Client.search_by_name("Sony", {states:['NSW'], postcode:'2000'})
+  => [<#ABNSearch::Entity>,<#ABNSearch::Entity>,<#ABNSearch::Entity>,...]
 
 = Errors
 This gem uses actual error handling from version 1.0.0
