@@ -16,8 +16,8 @@ Simply add the following line to your Gemfile and run bundle install.
   require 'abn_search'
 
   # Connect to ABR
-  ABNSearch::ABR.new("YOUR_GUID_HERE")
-  => #<ABNSearch::ABR>
+  ABNSearch::Client.new("YOUR_GUID_HERE")
+  => #<ABNSearch::Client>
 
   # Create and validate an entity based on ABN
   my_entity = ABNSearch::Entity.new({abn: '59001215354'})

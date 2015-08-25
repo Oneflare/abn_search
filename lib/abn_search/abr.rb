@@ -4,11 +4,11 @@
 # Request examples;
 #
 # Search by ABN
-# > a = ABNSearch::ABR.new("your-guid")
+# > a = ABNSearch::Client.new("your-guid")
 # > result = a.search("56206894472")
 #
 # Search by name and return an array of results
-# > a = ABNSearch::ABR.new("your-guid")
+# > a = ABNSearch::Client.new("your-guid")
 # > result = a.search_by_name("Sony", {states:['NSW', 'VIC']})
 # > another_result = a.search_by_name("Sony", {postcode:2040})
 #
@@ -17,7 +17,7 @@ require 'savon'
 
 module ABNSearch
 
-  class ABR
+  class Client
 
     ENDPOINT = "http://www.abn.business.gov.au/abrxmlsearch/ABRXMLSearch.asmx?WSDL"
 
@@ -58,7 +58,7 @@ module ABNSearch
         validate_response(response,:abr_search_by_asic_response)
 
       rescue => e
-        raise "ABNSearch::ABR#search_by_acn raised #{e.class}: #{e.message}"
+        raise "ABNSearch::Client#search_by_acn raised #{e.class}: #{e.message}"
       end
     end
 
@@ -77,7 +77,7 @@ module ABNSearch
 
         validate_response(response,:abr_search_by_abn_response)
       rescue => e
-        raise "ABNSearch::ABR#search raised #{e.class}: #{e.message}"
+        raise "ABNSearch::Client#search raised #{e.class}: #{e.message}"
       end
     end
 
