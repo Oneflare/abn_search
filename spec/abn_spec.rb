@@ -1,6 +1,6 @@
 require File.expand_path(File.join(File.dirname(__FILE__), 'spec_helper'))
 
-describe ABNSearch::ABN do
+describe ABNSearch::Entity do
   describe "valid? class method" do
     it "should identify a valid ABN" do
       good_abns.each do |abn|
@@ -61,37 +61,37 @@ describe ABNSearch::ABN do
 
   def good_abns
     [
-      ABNSearch::ABN.new({abn: 99124391073}),
-      ABNSearch::ABN.new({abn: '99124391073'}),
-      ABNSearch::ABN.new({abn: '99 12 439 10 73 '}),
-      ABNSearch::ABN.new({abn: '46 110 483 513'}),
+      ABNSearch::Entity.new({abn: 99124391073}),
+      ABNSearch::Entity.new({abn: '99124391073'}),
+      ABNSearch::Entity.new({abn: '99 12 439 10 73 '}),
+      ABNSearch::Entity.new({abn: '46 110 483 513'}),
     ]
   end
 
   def bad_abns
     [
-      ABNSearch::ABN.new({abn: 9912439107}),
-      ABNSearch::ABN.new({abn: 991243910711}),
-      ABNSearch::ABN.new({abn: 'tom'}),
-      ABNSearch::ABN.new({abn: '99124391072'}),
+      ABNSearch::Entity.new({abn: 9912439107}),
+      ABNSearch::Entity.new({abn: 991243910711}),
+      ABNSearch::Entity.new({abn: 'tom'}),
+      ABNSearch::Entity.new({abn: '99124391072'}),
     ]
   end
 
   def good_acns
     [
-      ABNSearch::ABN.new({acn: 124391073}),
-      ABNSearch::ABN.new({acn: '124391073'}),
-      ABNSearch::ABN.new({acn: ' 12 439 10 73 '}),
-      ABNSearch::ABN.new({acn: '110 483 513'}),
+      ABNSearch::Entity.new({acn: 124391073}),
+      ABNSearch::Entity.new({acn: '124391073'}),
+      ABNSearch::Entity.new({acn: ' 12 439 10 73 '}),
+      ABNSearch::Entity.new({acn: '110 483 513'}),
     ]
   end
 
   def bad_acns
     [
-      ABNSearch::ABN.new({acn: 12439107}),
-      ABNSearch::ABN.new({acn: 1243910711}),
-      ABNSearch::ABN.new({acn: 'tom'}),
-      ABNSearch::ABN.new({acn: '124391072'}),
+      ABNSearch::Entity.new({acn: 12439107}),
+      ABNSearch::Entity.new({acn: 1243910711}),
+      ABNSearch::Entity.new({acn: 'tom'}),
+      ABNSearch::Entity.new({acn: '124391072'}),
     ]
   end
 

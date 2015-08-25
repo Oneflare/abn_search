@@ -48,7 +48,7 @@ module ABNSearch
     # @return [ABNSearch] search results in class instance
     # TODO: cleanup the acn method
     def self.search_by_acn(acn)
-      raise ArgumentError, "ACN #{acn} is invalid" unless ABNSearch::ABN.valid_acn?(acn)
+      raise ArgumentError, "ACN #{acn} is invalid" unless ABNSearch::Entity.valid_acn?(acn)
       raise ArgumentError, 'No GUID provided. Please obtain one at - http://www.abr.business.gov.au/Webservices.aspx' if @@guid.nil?
 
       begin
@@ -68,7 +68,7 @@ module ABNSearch
     # @param [String] abn - the abn you wish to search for
     # @return [ABNSearch] search results in class instance
     def self.search(abn)
-      raise ArgumentError, "ABN #{abn} is invalid" unless ABNSearch::ABN.valid?(abn)
+      raise ArgumentError, "ABN #{abn} is invalid" unless ABNSearch::Entity.valid?(abn)
       raise ArgumentError, 'No GUID provided. Please obtain one at - http://www.abr.business.gov.au/Webservices.aspx' if @@guid.nil?
 
       begin
