@@ -2,7 +2,7 @@
 # ABN Object
 #
 module ABNSearch
-  class ABN
+  class Entity
 
     @acn                = nil
     @abn                = nil
@@ -27,11 +27,11 @@ module ABNSearch
     #
     # @param options [Hash] hash of options
     #
-    # @return [ABNSearch::ABN] an instance of ABNSearch::ABN is returned
+    # @return [ABNSearch::Entity] an instance of ABNSearch::Entity is returned
     def initialize(options={})
       # try to mash the input into something usable
-      @abn        = options[:abn].to_s.gsub(/\s+/,"") unless options[:abn] == nil
-      @acn        = options[:acn].to_s.gsub(/\s+/,"") unless options[:acn] == nil
+      @abn        = options[:abn].to_s.gsub(/\s+/,"").rjust(11,"0") unless options[:abn] == nil
+      @acn        = options[:acn].to_s.gsub(/\s+/,"").rjust(9,"0") unless options[:acn] == nil
 
     end
 
