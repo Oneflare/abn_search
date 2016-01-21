@@ -47,4 +47,4 @@ If an ABN is missing, invalid or expired - check the errors attribute.
 = Notes
 - Australian Business Register: http://www.abr.business.gov.au/
 - XML API: http://abr.business.gov.au/ABRXMLSearch/AbrXmlSearch.asmx
-- GUID Registration link: http://www.abr.business.gov.au/Register.aspx
+- GUID Registration link: http://abr.business.gov.au/Documentation/UserGuideWebRegistration.aspx
