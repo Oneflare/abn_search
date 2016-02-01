@@ -3,7 +3,7 @@
 A simple ABN search library for validating and obtaining ABN details from the Australian Business Register.
 
 PLEASE NOTE: You will need a GUID to be able to use the ABR business lookup API. You can obtain one at the following link;
-http://www.abr.business.gov.au/Register.aspx
+http://abr.business.gov.au/Documentation/UserGuideWebRegistration.aspx
 
 = Rails 3+ Installation
 
@@ -47,4 +47,4 @@ If an ABN is missing, invalid or expired - check the errors attribute.
 = Notes
 - Australian Business Register: http://www.abr.business.gov.au/
 - XML API: http://abr.business.gov.au/ABRXMLSearch/AbrXmlSearch.asmx
-- GUID Registration link: http://www.abr.business.gov.au/Register.aspx
+- GUID Registration link: http://abr.business.gov.au/Documentation/UserGuideWebRegistration.aspx
