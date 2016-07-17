@@ -162,7 +162,7 @@ class ABNSearch
       trading_name:         result[:main_trading_name].blank? ? "" : (result[:main_trading_name][:organisation_name] rescue ""),
       legal_name:           result[:legal_name].blank? ? "" : ("#{result[:legal_name][:given_name]} #{result[:legal_name][:family_name]}" rescue ""),
       legal_name2:          result[:legal_name].blank? ? "" : (result[:legal_name][:full_name] rescue ""),
-      other_trading_name:   result[:other_trading_name].blank? ? "" : (result[:other_trading_name][:organisation_name] rescue ""),
+      other_trading_name:   result[:other_trading_name].blank? ? "" : Array.wrap(result[:other_trading_name]).map { |h| h[:organisation_name] }
       active_from_date:     result[:entity_status].blank? ? "" : (result[:entity_status][:effective_from] rescue ""),
       address_state_code:   result[:main_business_physical_address].blank? ? "" : (result[:main_business_physical_address][:state_code] rescue ""),
       address_post_code:    result[:main_business_physical_address].blank? ? "" : (result[:main_business_physical_address][:postcode] rescue ""),
@@ -172,18 +172,16 @@ class ABNSearch
     }
 
     # Work out what we should return as a name
-    if !result[:trading_name].blank?
+    if result[:trading_name].present?
       result[:name] = result[:trading_name]
-    elsif !result[:main_name].blank?
+    elsif result[:main_name].present?
       result[:name] = result[:main_name]
-    elsif !result[:other_trading_name].blank?
-      result[:name] = result[:other_trading_name]
-    else
-      if !result[:legal_name].blank? && result[:legal_name].length > 2
+    elsif result[:other_trading_name].any? && result[:other_trading_name].first.present?
+      result[:name] = result[:other_trading_name].first
+    elsif result[:legal_name].present? && result[:legal_name].length > 2
         result[:name] = result[:legal_name]
-      elsif !result[:legal_name2].blank?
-        result[:name] = result[:legal_name2]
-      end
+    elsif result[:legal_name2].present?
+      result[:name] = result[:legal_name2]
     end
 
     return result
