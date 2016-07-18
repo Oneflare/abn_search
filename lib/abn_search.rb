@@ -162,7 +162,7 @@ class ABNSearch
       trading_name:         result[:main_trading_name].blank? ? "" : (result[:main_trading_name][:organisation_name] rescue ""),
       legal_name:           result[:legal_name].blank? ? "" : ("#{result[:legal_name][:given_name]} #{result[:legal_name][:family_name]}" rescue ""),
       legal_name2:          result[:legal_name].blank? ? "" : (result[:legal_name][:full_name] rescue ""),
-      other_trading_name:   result[:other_trading_name].blank? ? "" : Array.wrap(result[:other_trading_name]).map { |h| h[:organisation_name] }
+      other_trading_name:   result[:other_trading_name].blank? ? "" : Array.wrap(result[:other_trading_name]).map { |h| h[:organisation_name] },
       active_from_date:     result[:entity_status].blank? ? "" : (result[:entity_status][:effective_from] rescue ""),
       address_state_code:   result[:main_business_physical_address].blank? ? "" : (result[:main_business_physical_address][:state_code] rescue ""),
       address_post_code:    result[:main_business_physical_address].blank? ? "" : (result[:main_business_physical_address][:postcode] rescue ""),

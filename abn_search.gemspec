@@ -3,7 +3,7 @@ $:.push File.expand_path("../lib", __FILE__)
 
 Gem::Specification.new do |s|
   s.name        = "abn_search"
-  s.version     = '0.0.7'
+  s.version     = '0.0.8'
   s.authors     = ["James Martin"]
   s.email       = ["james@visualconnect.net"]
   s.homepage    = "https://github.com/jamsi/abn_search"
