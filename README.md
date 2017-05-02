@@ -1,3 +1,7 @@
+[![CircleCI](https://circleci.com/gh/Oneflare/abn_search/tree/master.svg?style=svg&circle-token=4ecf3e2c7e6e97f96ab1b19b9ed0dbba44efa121)](https://circleci.com/gh/Oneflare/abn_search/tree/master)
+
+[![Coverage Status](https://coveralls.io/repos/github/Oneflare/atlas-rb/badge.svg?branch=master&t=1RymIk)](https://coveralls.io/github/Oneflare/atlas-rb?branch=master)
+
 abn_search
 ================
 A simple ABN search library for validating and obtaining ABN details from the Australian Business Register.
