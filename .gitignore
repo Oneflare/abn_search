@@ -2,9 +2,12 @@
 .rspec
 Gemfile.lock
 
-## Environment normalisation:
+# Environment normalisation:
 /.bundle
 /vendor/bundle
 
 # Rubocop
 /.rubocop.yml
+
+# Simplecov
+coverage
