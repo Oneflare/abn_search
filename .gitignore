@@ -1,1 +1,10 @@
 .DS_Store
+.rspec
+Gemfile.lock
+
+## Environment normalisation:
+/.bundle
+/vendor/bundle
+
+# Rubocop
+/.rubocop.yml

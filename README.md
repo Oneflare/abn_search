@@ -20,7 +20,24 @@ Simply add the following line to your Gemfile and run bundle install.
 gem 'abn_search'
 ```
 
+## Tests
+You can run the test suite with
+```bash
+bundle exec rake
+```
+or
+```bash
+bundle exec rake rspec
+```
+
+Please ensure that you write tests for any commits, and that tests pass locally before you submit a PR.
+
 ## Usage
+
+#### To start IRB with the gem
+```bash
+bundle exec rake console
+```
 
 #### Set up a client
 ```ruby

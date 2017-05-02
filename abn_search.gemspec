@@ -1,7 +1,9 @@
-$:.push File.expand_path('../lib', __FILE__)
+# frozen_string_literal: true
+
+$LOAD_PATH.push File.expand_path("../lib", __FILE__)
 
 # Maintain your gem's version:
-require 'abn/version'
+require "abn/version"
 
 Gem::Specification.new do |s|
   s.name        = "abn_search"
@@ -10,14 +12,20 @@ Gem::Specification.new do |s|
   s.email       = ["james@oneflare.com"]
   s.homepage    = "https://github.com/oneflare/abn_search"
   s.summary     = "ABN Search library for Australian businesses."
-  s.description = "A simple ABN search library for validating and obtaining ABN details from the Australian Business Register."
-  s.rubyforge_project = "abn_search"
+  s.description = "A simple ABN search library for validating and obtaining ABN details from the " \
+                  "Australian Business Register."
   s.license     = "MIT"
+  s.rubyforge_project = "abn_search"
 
-  s.files = Dir['{lib}/**/*', 'MIT-LICENSE', 'Rakefile', 'README.rdoc']
-  s.test_files = Dir['spec/**/*']
+  s.files = Dir["{lib}/**/*", "MIT-LICENSE", "Rakefile", "README.rdoc"]
+  s.test_files = Dir["spec/**/*"]
 
-  s.add_dependency("savon")
-  s.add_dependency("nokogiri")
-  s.add_development_dependency("yard")
+  s.add_dependency("savon", "~> 2.6")
+  s.add_dependency("nokogiri", "~> 1.6")
+  s.add_development_dependency "coveralls", "~> 0.7"
+  s.add_development_dependency "rake", "~> 12.0"
+  s.add_development_dependency "rspec", "~> 3.5", ">= 3.0"
+  s.add_development_dependency "rspec_junit_formatter", "~> 0.2"
+  s.add_development_dependency "simplecov", "~> 0.10.0"
+  s.add_development_dependency("yard", "~> 0.8")
 end

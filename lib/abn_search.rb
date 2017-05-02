@@ -1,24 +1,22 @@
-require "savon"
+# frozen_string_literal: true
+
 require "abn/client"
 require "abn/entity"
+require "forwardable"
+require "savon"
 
 # Backwards compatibility funtimes.
 class ABNSearch
-  @fowarder = nil
 
-  def initialize(guid=nil, options = {})
-    @fowarder = Abn::Client.new(guid, options)
+  extend Forwardable
+
+  attr_reader :client
+
+  def initialize(guid = nil, options = {})
+    @client = ::Abn::Client.new(guid, options)
   end
 
-  def search_by_acn(acn)
-    @fowarder.search_by_acn(acn)
-  end
+  # setup delegation for search methods to the Abn::Client class
+  def_delegators :client, :search, :search_by_acn, :search_by_name
 
-  def search_by_name(name, states=["NSW"], postcode="ALL")
-    @fowarder.search_by_name(name, states, postcode)
-  end
-
-  def search(abn)
-    @fowarder.search(abn)
-  end
 end
