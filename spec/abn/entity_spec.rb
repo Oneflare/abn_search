@@ -3,19 +3,9 @@ require "spec_helper"
 describe Abn::Entity do
   let(:instance) { described_class.new }
 
-  subject { instance }
-
-  shared_examples_for "it has attribute" do |attribute_name|
-    it "should allow setting #{attribute_name}" do
-      expect(subject.respond_to?("#{attribute_name}=")).to eq(true)
-    end
-
-    it "should allow getting #{attribute_name}" do
-      expect(subject.respond_to?(attribute_name)).to eq(true)
-    end
-  end
-
   describe "attributes" do
+    subject { instance }
+
     it_should_behave_like "it has attribute", :abn
     it_should_behave_like "it has attribute", :acn
     it_should_behave_like "it has attribute", :active_from_date

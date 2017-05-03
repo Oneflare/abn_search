@@ -1,6 +1,11 @@
+# frozen_string_literal: true
+
 module Abn
 
   class Client
+
+    SOAP_API_WSDL_URL = "http://www.abn.business.gov.au/abrxmlsearch/ABRXMLSearch.asmx?WSDL"
+
     attr_accessor :errors, :guid, :proxy, :client_options
 
     # Setup a new instance of the ABN search class.
@@ -9,13 +14,14 @@ module Abn
     # @param [Hash] options - options detailed below
     # @option options [String] :proxy Proxy URL string if required (Example: http://user:pass@host.example.com:443)
     # @return [ABNSearch]
-    def initialize(guid=nil, options = {})
+    def initialize(guid = nil, options = {})
       self.errors = []
-      self.guid = guid unless guid.nil?
-      self.proxy = options[:proxy] || nil
-      self.client_options = {}
-      self.client_options = { :wsdl => "http://www.abn.business.gov.au/abrxmlsearch/ABRXMLSearch.asmx?WSDL" }
-      self.client_options.merge!({ :proxy => self.proxy }) unless self.proxy.nil?
+      self.guid = guid
+      self.proxy = options[:proxy]
+
+      # savon client options
+      self.client_options = { wsdl: SOAP_API_WSDL_URL }
+      client_options[:proxy] = proxy if proxy
     end
 
     # Performs an ABR search for the ABN setup upon initialization
@@ -90,7 +96,7 @@ module Abn
         response = client.call(:abr_search_by_name, message: request)
         result_list = response.body[:abr_search_by_name_response][:abr_payload_search_results][:response][:search_results_list]
 
-        if result_list.blank?
+        if result_list.empty?
           return []
         else
           results = response.body[:abr_search_by_name_response][:abr_payload_search_results][:response][:search_results_list][:search_results_record]
@@ -124,8 +130,9 @@ module Abn
     end
 
     def valid?
-      self.errors.size == 0
+      errors.empty?
     end
 
   end
+
 end

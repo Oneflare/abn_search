@@ -3,15 +3,12 @@
 require "simplecov"
 
 if ENV["CI"]
-  unless ENV["RUN_SPEC_LOCALLY"]
-    require "coveralls"
-    SimpleCov.formatter = Coveralls::SimpleCov::Formatter
-  end
+  require "coveralls"
+  SimpleCov.formatter = Coveralls::SimpleCov::Formatter
 end
 
 SimpleCov.start do
   add_filter "/spec/"
-
   add_group "Core", "lib"
 end
 
@@ -20,3 +17,4 @@ RSpec.configure do |config|
 end
 
 require "abn_search"
+require "./spec/support/shared_examples_for_attribute.rb"
