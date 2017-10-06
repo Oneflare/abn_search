@@ -37,17 +37,17 @@ describe Abn::Entity do
           before { instance.legal_name = "legal_name" }
           it { is_expected.to eq("legal_name") }
 
-          context "when main_name is present" do
-            before { instance.main_name = "main_name" }
-            it { is_expected.to eq("main_name") }
+          context "when other_trading_name is present" do
+            before { instance.other_trading_name = "other_trading_name" }
+            it { is_expected.to eq("other_trading_name") }
 
-            context "when other_trading_name is present" do
-              before { instance.other_trading_name = "other_trading_name" }
-              it { is_expected.to eq("other_trading_name") }
+            context "when trading_name is present" do
+              before { instance.trading_name = "trading_name" }
+              it { is_expected.to eq("trading_name") }
 
-              context "when trading_name is present" do
-                before { instance.trading_name = "trading_name" }
-                it { is_expected.to eq("trading_name") }
+              context "when main_name is present" do
+                before { instance.main_name = "main_name" }
+                it { is_expected.to eq("main_name") }
               end
             end
           end
