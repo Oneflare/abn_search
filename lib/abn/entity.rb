@@ -41,9 +41,9 @@ module Abn
     #
     # @return [String] business name
     def best_name
-      trading_name ||
+      main_name ||
+        trading_name ||
         other_trading_name ||
-        main_name ||
         legal_name ||
         legal_name2 ||
         "Name unknown"
