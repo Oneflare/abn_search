@@ -41,7 +41,7 @@ bundle exec rake console
 
 #### Set up a client
 ```ruby
-client = Abn::Search.new("YOUR_GUID_HERE")
+client = Abn::Client.new("YOUR_GUID_HERE")
 ```
 
 #### Search by ABN Number
