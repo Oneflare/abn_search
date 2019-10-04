@@ -4,7 +4,8 @@ module Abn
 
   class Client
 
-    SOAP_API_WSDL_URL = "http://www.abn.business.gov.au/abrxmlsearch/ABRXMLSearch.asmx?WSDL"
+    SOAP_API_WSDL_URL = "https://www.abn.business.gov.au/abrxmlsearch/ABRXMLSearch.asmx?WSDL"
+    WEBSERVICES_URL = "https://www.abr.business.gov.au/Webservices.aspx"
 
     attr_accessor :errors, :guid, :proxy, :client_options
 
@@ -30,7 +31,7 @@ module Abn
     # @return [Hash] search result in a hash
     def search_by_acn(acn)
       self.errors << "No ACN provided." && return if acn.nil?
-      self.errors << "No GUID provided. Please obtain one at - http://www.abr.business.gov.au/Webservices.aspx" && return if self.guid.nil?
+      self.errors << "No GUID provided. Please obtain one at - #{WEBSERVICES_URL}" && return if self.guid.nil?
 
       begin
         client = Savon.client(self.client_options)
@@ -48,7 +49,7 @@ module Abn
     # @return [Hash] search result in a hash
     def search(abn)
       self.errors << "No ABN provided." && return if abn.nil?
-      self.errors << "No GUID provided. Please obtain one at - http://www.abr.business.gov.au/Webservices.aspx" && return if self.guid.nil?
+      self.errors << "No GUID provided. Please obtain one at - #{WEBSERVICES_URL}" && return if self.guid.nil?
 
       begin
         client = Savon.client(self.client_options)
