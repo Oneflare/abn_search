@@ -1,0 +1,39 @@
+version: 2
+jobs:
+  build:
+    working_directory: ~/Oneflare/abn_search
+    parallelism: 1
+    shell: /bin/bash --login
+    environment:
+      CIRCLE_ARTIFACTS: /tmp/circleci-artifacts
+      CIRCLE_TEST_REPORTS: /tmp/circleci-test-results
+    docker:
+    - image: circleci/build-image:ubuntu-14.04-XXL-upstart-1189-5614f37
+      command: /sbin/init
+    steps:
+    - checkout
+    - run: mkdir -p $CIRCLE_ARTIFACTS $CIRCLE_TEST_REPORTS
+    - run:
+        working_directory: ~/Oneflare/abn_search
+        command: 'echo ''Australia/Sydney'' | sudo tee -a /etc/timezone; sudo dpkg-reconfigure -f noninteractive tzdata; sudo service mysql restart; sudo service postgresql restart; '
+    - run:
+        working_directory: ~/Oneflare/abn_search
+        command: rm -f Oneflare/abn_search/.rvmrc; echo 2.3.1 > Oneflare/abn_search/.ruby-version; rvm use 2.3.1 --default
+    - restore_cache:
+        keys:
+        - v1-dep-{{ .Branch }}-
+        - v1-dep-master-
+        - v1-dep-
+    - run: bundle check --path=/home/ubuntu/.bundle || bundle install --path=/home/ubuntu/.bundle --jobs=4 --retry=3
+    - save_cache:
+        key: v1-dep-{{ .Branch }}-{{ epoch }}
+        paths:
+        - vendor/bundle
+        - ~/.bundle
+    - run: bundle exec rspec -r rspec_junit_formatter --format RspecJunitFormatter -o $CIRCLE_TEST_REPORTS/rspec/junit.xml
+    - store_test_results:
+        path: /tmp/circleci-test-results
+    - store_artifacts:
+        path: /tmp/circleci-artifacts
+    - store_artifacts:
+        path: /tmp/circleci-test-results
