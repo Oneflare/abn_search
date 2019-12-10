@@ -1,39 +1,54 @@
-version: 2
+version: 2.0
+
 jobs:
-  build:
-    working_directory: ~/Oneflare/abn_search
-    parallelism: 1
-    shell: /bin/bash --login
-    environment:
-      CIRCLE_ARTIFACTS: /tmp/circleci-artifacts
-      CIRCLE_TEST_REPORTS: /tmp/circleci-test-results
+  checkout_code:
     docker:
-    - image: circleci/build-image:ubuntu-14.04-XXL-upstart-1189-5614f37
-      command: /sbin/init
+      - image: circleci/ruby:2.3
+    working_directory: ~/Oneflare/abn_search
     steps:
-    - checkout
-    - run: mkdir -p $CIRCLE_ARTIFACTS $CIRCLE_TEST_REPORTS
-    - run:
-        working_directory: ~/Oneflare/abn_search
-        command: 'echo ''Australia/Sydney'' | sudo tee -a /etc/timezone; sudo dpkg-reconfigure -f noninteractive tzdata; sudo service mysql restart; sudo service postgresql restart; '
-    - run:
-        working_directory: ~/Oneflare/abn_search
-        command: rm -f Oneflare/abn_search/.rvmrc; echo 2.3.1 > Oneflare/abn_search/.ruby-version; rvm use 2.3.1 --default
-    - restore_cache:
-        keys:
-        - v1-dep-{{ .Branch }}-
-        - v1-dep-master-
-        - v1-dep-
-    - run: bundle check --path=/home/ubuntu/.bundle || bundle install --path=/home/ubuntu/.bundle --jobs=4 --retry=3
-    - save_cache:
-        key: v1-dep-{{ .Branch }}-{{ epoch }}
-        paths:
-        - vendor/bundle
-        - ~/.bundle
-    - run: bundle exec rspec -r rspec_junit_formatter --format RspecJunitFormatter -o $CIRCLE_TEST_REPORTS/rspec/junit.xml
-    - store_test_results:
-        path: /tmp/circleci-test-results
-    - store_artifacts:
-        path: /tmp/circleci-artifacts
-    - store_artifacts:
-        path: /tmp/circleci-test-results
+      - checkout
+      - save_cache:
+          key: v1-repo-{{ .Environment.CIRCLE_SHA1 }}
+          paths:
+            - ~/circleci-demo-workflows
+
+  bundle_dependencies:
+    docker:
+      - image: circleci/ruby:2.3
+    working_directory: ~/Oneflare/abn_search
+    steps:
+      - restore_cache:
+          key: v1-repo-{{ .Environment.CIRCLE_SHA1 }}
+      - restore_cache:
+          key: v1-bundle-{{ checksum "abn_search.gemspec" }}
+      - run: bundle install --path vendor/bundle
+      - save_cache:
+          key: v1-bundle-{{ checksum "abn_search.gemspec" }}
+          paths:
+            - ~/Oneflare/abn_search/vendor/bundle
+
+  test:
+    docker:
+      - image: circleci/ruby:2.3
+    working_directory: ~/Oneflare/abn_search
+    steps:
+      - restore_cache:
+          key: v1-repo-{{ .Environment.CIRCLE_SHA1 }}
+      - restore_cache:
+          key: v1-bundle-{{ checksum "Gemfile.lock" }}
+      - run: bundle --path vendor/bundle
+      - run:
+          name: Run tests
+          command: bundle exec rspec -r rspec_junit_formatter --format RspecJunitFormatter -o tmp/rspec/junit.xml
+
+workflows:
+  version: 2
+  bundle-and-test:
+    jobs:
+      - checkout_code
+      - bundle_dependencies:
+          requires:
+            - checkout_code
+      - test:
+          requires:
+            - bundle_dependencies
