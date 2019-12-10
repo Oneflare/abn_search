@@ -35,7 +35,7 @@ jobs:
       - restore_cache:
           key: v1-repo-{{ .Environment.CIRCLE_SHA1 }}
       - restore_cache:
-          key: v1-bundle-{{ checksum "Gemfile.lock" }}
+          key: v1-bundle-{{ checksum "abn_search.gemspec" }}
       - run: bundle --path vendor/bundle
       - run:
           name: Run tests
