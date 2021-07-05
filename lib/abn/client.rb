@@ -123,6 +123,7 @@ module Abn
       entity.address_from_date  = result[:AddressDate]
       entity.gst_from_date      = result[:Gst]
       entity.name               = entity.best_name
+      entity.raw_data           = result
       entity.instance_values
     end
 

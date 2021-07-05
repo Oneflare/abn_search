@@ -22,6 +22,7 @@ module Abn
       status
       trading_name
       business_name
+      raw_data
     ].freeze
 
     attr_accessor(*ATTRIBUTES)
