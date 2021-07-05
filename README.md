@@ -1,4 +1,4 @@
-abn_search [![CircleCI](https://circleci.com/gh/Oneflare/abn_search/tree/master.svg?style=svg)](https://circleci.com/gh/Oneflare/abn_search/tree/master) [![Coverage Status](https://coveralls.io/repos/github/Oneflare/abn_search/badge.svg?branch=master)](https://coveralls.io/github/Oneflare/abn_search?branch=master)
+abn_search [![CircleCI](https://circleci.com/gh/Oneflare/abn_search/tree/master.svg?style=svg)](https://circleci.com/gh/Oneflare/abn_search/tree/master) [![Coverage Status](https://coveralls.io/repos/github/Oneflare/abn_search/badge.svg)](https://coveralls.io/github/Oneflare/abn_search)
 ================
 A simple ABN search library for validating and obtaining ABN details from the Australian Business Register.
 
