@@ -51,7 +51,7 @@ describe Abn::Client do
 
         it "adds to errors array and returns" do
           error_message = "No GUID provided. Please obtain one at - " \
-                          "http://www.abr.business.gov.au/Webservices.aspx"
+                          "https://www.abr.business.gov.au/Webservices.aspx"
 
           expect { instance.search(abn) }.to change(instance, :errors).to([error_message])
         end
@@ -136,7 +136,7 @@ describe Abn::Client do
 
         it "adds to errors array and returns" do
           error_message = "No GUID provided. Please obtain one at - " \
-                          "http://www.abr.business.gov.au/Webservices.aspx"
+                          "https://www.abr.business.gov.au/Webservices.aspx"
 
           expect { instance.search_by_acn(acn) }.to \
             change(instance, :errors).from([]).to([error_message])

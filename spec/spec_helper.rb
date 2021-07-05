@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require "simplecov"
+require "pry"
 
 if ENV["CI"]
   require "coveralls"
