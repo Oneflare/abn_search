@@ -21,6 +21,7 @@ Gem::Specification.new do |s|
   s.test_files = Dir["spec/**/*"]
 
   s.add_dependency("savon", "~> 2.6")
+  s.add_dependency("httparty", "~> 0")
   s.add_dependency("nokogiri", "~> 1.6")
   s.add_development_dependency "coveralls", "~> 0.7"
   s.add_development_dependency "rake", "~> 12.0"

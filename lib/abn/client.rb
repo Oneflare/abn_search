@@ -5,6 +5,7 @@ module Abn
   class Client
 
     SOAP_API_WSDL_URL = "https://www.abn.business.gov.au/abrxmlsearch/ABRXMLSearch.asmx?WSDL"
+    JSON_API_URL = "https://abr.business.gov.au/json/AbnDetails.aspx"
     WEBSERVICES_URL = "https://www.abr.business.gov.au/Webservices.aspx"
 
     attr_accessor :errors, :guid, :proxy, :client_options
@@ -52,10 +53,9 @@ module Abn
       self.errors << "No GUID provided. Please obtain one at - #{WEBSERVICES_URL}" && return if self.guid.nil?
 
       begin
-        client = Savon.client(self.client_options)
-        response = client.call(:abr_search_by_abn, message: { authenticationGuid: guid, searchString: abn.gsub(" ", ""), includeHistoricalDetails: "N" })
-        result = response.body[:abr_search_by_abn_response][:abr_payload_search_results][:response][:business_entity]
-        return parse_search_result(result)
+        response = ::HTTParty.get(JSON_API_URL, query: { abn: abn.gsub(" ", ""), guid: guid })
+        result = JSON.parse(response[9..-2], symbolize_names: true)
+        json_parse_search_result(result)
       rescue => ex
         self.errors << ex.to_s
       end
@@ -107,6 +107,23 @@ module Abn
       rescue => ex
         self.errors << ex.to_s
       end
+    end
+
+    def json_parse_search_result(result)
+      entity = Abn::Entity.new
+      entity.abn                = result[:Abn]
+      entity.acn                = result[:Acn]
+      entity.active_from_date   = result[:AbnStatusEffectiveFrom]
+      entity.entity_type        = result[:EntityTypeName]
+      entity.status             = result[:AbnStatus]
+      entity.main_name          = result[:EntityName]
+      entity.business_name      = result[:BusinessName]
+      entity.address_post_code  = result[:AddressPostcode]
+      entity.address_state_code = result[:AddressState]
+      entity.address_from_date  = result[:AddressDate]
+      entity.gst_from_date      = result[:Gst]
+      entity.name               = entity.best_name
+      entity.instance_values
     end
 
     def parse_search_result(result)

@@ -1,9 +1,10 @@
 # frozen_string_literal: true
 
+require "httparty"
+require "savon"
 require "abn/client"
 require "abn/entity"
 require "forwardable"
-require "savon"
 
 # Backwards compatibility funtimes.
 class ABNSearch

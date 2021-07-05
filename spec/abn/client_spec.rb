@@ -58,26 +58,10 @@ describe Abn::Client do
       end
 
       context "when preliminary checks pass" do
-        before { allow(Savon).to receive(:client).and_return(savon_client) }
-
-        context "when savon request is successful" do
+        context "when request is successful" do
           before do
-            dummy_result = {
-              abr_search_by_abn_response: {
-                abr_payload_search_results: {
-                  response: {
-                    business_entity: {
-                      asic_number: "12345",
-                      abn: {
-                        identifier_value: "54321"
-                      }
-                    }
-                  }
-                }
-              }
-            }
-            response = double("response", body: dummy_result)
-            allow(savon_client).to receive(:call).and_return(response)
+            response = "callback({\"Abn\":\"26154482283\",\"AbnStatus\":\"Active\",\"AbnStatusEffectiveFrom\":\"2011-11-28\",\"Acn\":\"154482283\",\"AddressDate\":\"2014-10-24\",\"AddressPostcode\":\"2000\",\"AddressState\":\"NSW\",\"BusinessName\":[],\"EntityName\":\"Oneflare Pty Ltd\",\"EntityTypeCode\":\"PRV\",\"EntityTypeName\":\"Australian Private Company\",\"Gst\":\"2011-11-28\",\"Message\":\"\"})"
+            allow(HTTParty).to receive(:get).and_return(response)
           end
 
           it "returns a hash result" do
@@ -86,12 +70,12 @@ describe Abn::Client do
 
           it "returns parsed data" do
             result = instance.search(abn)
-            expect(result).to include(acn: "12345", abn: "54321")
+            expect(result).to include(acn: "154482283", abn: "26154482283")
           end
         end
 
-        context "when savon request raises an exception" do
-          before { allow(savon_client).to receive(:call).and_raise("Error") }
+        context "when request raises an exception" do
+          before { allow(HTTParty).to receive(:get).and_raise("Error") }
 
           it "adds exception message to errors array" do
             expect { instance.search(abn) }.to change(instance, :errors).to(["Error"])
