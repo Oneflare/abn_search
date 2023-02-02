@@ -5,7 +5,7 @@ jobs:
   build:
 
     docker:
-      - image: cimg/ruby:2.5.9
+      - image: cimg/ruby:2.7.7
 
     steps:
       - checkout
