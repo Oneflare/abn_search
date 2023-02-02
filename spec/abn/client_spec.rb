@@ -214,8 +214,6 @@ describe Abn::Client do
               abr_payload_search_results: {
                 response: {
                   search_results_list: {
-                    search_results_record: [
-                    ]
                   }
                 }
               }
