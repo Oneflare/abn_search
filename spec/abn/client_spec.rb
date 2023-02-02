@@ -205,6 +205,27 @@ describe Abn::Client do
             change(instance, :errors).to(["Error"])
         end
       end
+      
+      # well at least that's what I'm assuming drives this else clause :grimacing:
+      context "when the business can't be found" do
+        let(:dummy_result) do
+          {
+            abr_search_by_name_response: {
+              abr_payload_search_results: {
+                response: {
+                  search_results_list: {
+                    search_results_record: [
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        end
+
+        it { is_expected.to be_empty }
+ 
+      end
     end
 
     describe "#valid?" do
