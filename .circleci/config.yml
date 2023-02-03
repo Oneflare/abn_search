@@ -3,9 +3,12 @@ version: 2.1
 jobs:
 
   build:
+    parameters:
+      ruby-version:
+        type: string
 
     docker:
-      - image: cimg/ruby:2.7.7
+      - image: cimg/ruby:<< parameters.ruby-version >>
 
     steps:
       - checkout
@@ -22,3 +25,12 @@ jobs:
                               --format RspecJunitFormatter \
                               --out /tmp/test-results/rspec.xml \
                               --format progress
+workflows:
+  build:
+    jobs:
+      - build:
+          matrix:
+            parameters:
+              # https://github.com/CircleCI-Public/cimg-ruby
+              # only supports the last three ruby versions
+              ruby-version: ["2.7.7", "3.0", "3.1"]
