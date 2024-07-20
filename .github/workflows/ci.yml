@@ -45,3 +45,6 @@ jobs:
         with:
           paths: junit-xml-report-${{ matrix.ruby-version }}.xml
 
+      - name: Build
+        run: gem build abn_search.gemspec
+
