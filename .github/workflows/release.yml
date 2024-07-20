@@ -1,0 +1,57 @@
+name: Release
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          bundler-cache: true
+
+      - name: Run tests
+        run: |
+          bundle exec rspec \
+            --profile 10 \
+            --order random \
+            --format RspecJunitFormatter \
+            --out junit-xml-report.xml \
+            --format documentation \
+            spec/
+
+      - name: Test summary
+        uses: test-summary/action@v2
+        with:
+          paths: junit-xml-report.xml
+
+  release:
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          bundler-cache: true
+
+      - name: Publish to GitHub Packages
+        env:
+          GEM_HOST_API_KEY: "Bearer ${{ secrets.GITHUB_TOKEN }}"
+        run: |
+          mkdir -pv $HOME/.gem
+          touch $HOME/.gem/credentials
+          chmod 0600 $HOME/.gem/credentials
+          printf -- "---\n:github: ${GEM_HOST_API_KEY}\n" > $HOME/.gem/credentials
+          gem build abn_search.gemspec
+          gem push --KEY github --host https://rubygems.pkg.github.com/${{ github.repository_owner }}
+
+
