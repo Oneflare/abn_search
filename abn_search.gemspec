@@ -23,7 +23,7 @@ Gem::Specification.new do |s|
   s.add_dependency("savon", "~> 2.6")
   s.add_dependency("httparty", "~> 0")
   s.add_dependency("nokogiri", "~> 1.6")
-  s.add_development_dependency "coveralls_reborn", "~> 0.26.0"
+  s.add_development_dependency "coveralls_reborn", "~> 0.28.0"
   s.add_development_dependency "rake", "~> 13.0"
   s.add_development_dependency "rspec", "~> 3.5", ">= 3.0"
   s.add_development_dependency "rspec_junit_formatter", "~> 0.2"
