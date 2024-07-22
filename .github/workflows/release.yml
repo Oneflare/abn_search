@@ -1,0 +1,72 @@
+name: Release
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+  release:
+    types: [published]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        ruby-version: [
+          "2.7",
+          "2.7.7",
+          "3.0",
+          "3.1",
+          "3.2",
+          "3.3"
+        ]
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          bundler-cache: true
+
+      - name: Run tests
+        run: |
+          bundle exec rspec \
+            --profile 10 \
+            --order random \
+            --format RspecJunitFormatter \
+            --out junit-xml-report.xml \
+            --format documentation \
+            spec/
+
+      - name: Test summary
+        uses: test-summary/action@v2
+        with:
+          paths: junit-xml-report.xml
+
+  release:
+    runs-on: ubuntu-latest
+    needs: test
+    if: github.event_name == 'release'
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          bundler-cache: true
+
+      - name: Publish to GitHub Packages
+        env:
+          GEM_HOST_API_KEY: "Bearer ${{ secrets.GITHUB_TOKEN }}"
+        run: |
+          mkdir -pv $HOME/.gem
+          touch $HOME/.gem/credentials
+          chmod 0600 $HOME/.gem/credentials
+          printf -- "---\n:github: ${GEM_HOST_API_KEY}\n" > $HOME/.gem/credentials
+          gem build abn_search.gemspec
+          gem push --KEY github --host https://rubygems.pkg.github.com/${{ github.repository_owner }} abn_search-*.gem
+
+
