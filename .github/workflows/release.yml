@@ -49,6 +49,9 @@ jobs:
     runs-on: ubuntu-latest
     needs: test
     if: github.event_name == 'release'
+    permissions:
+      contents: write # To create tags and releases
+      packages: write # To publish the package
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
