@@ -11,6 +11,8 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read # To clone the repository
     strategy:
       matrix:
         ruby-version: [
@@ -49,6 +51,9 @@ jobs:
     runs-on: ubuntu-latest
     needs: test
     if: github.event_name == 'release'
+    permissions:
+      contents: read # To clone the repository
+      packages: write # To publish the package
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
